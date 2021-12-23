@@ -1,5 +1,7 @@
 const express = require('express')
 
+const productRouter = require('./routes/product.routes')
+
 class App {
   constructor () {
     this.express = express()
@@ -13,7 +15,7 @@ class App {
   }
 
   routes () {
-
+    this.express.use('/api/', productRouter)
   }
 }
 
