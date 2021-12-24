@@ -4,7 +4,12 @@ const Project = require('../models/Project')
 
 class ProjectController {
   async findAll (req, res, next) {
-
+    try {
+      const projects = await Project.findAll()
+      return res.json(projects)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async findOne (req, res, next) {
