@@ -1,12 +1,13 @@
-const BadRequest = require('../errors/badRequest')
+const BadRequest = require('../errors/BadRequest')
+const NotFound = require('../errors/NotFound')
 const Project = require('../models/Project')
 
 class ProjectController {
-  async findAll (req, res) {
+  async findAll (req, res, next) {
 
   }
 
-  async findOne (req, res) {
+  async findOne (req, res, next) {
 
   }
 
@@ -25,12 +26,19 @@ class ProjectController {
     }
   }
 
-  async update (req, res) {
+  async update (req, res, next) {
 
   }
 
-  async remove (req, res) {
+  async remove (req, res, next) {
+    try {
+      const project = await Project.destroy({ where: { id: req.params.id } })
+      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
 
+      return res.status(204).end()
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
