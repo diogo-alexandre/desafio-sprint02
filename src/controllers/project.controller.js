@@ -32,7 +32,22 @@ class ProjectController {
   }
 
   async update (req, res, next) {
+    try {
+      const { title, description } = req.body
 
+      const project = await Project.findOne({ where: { id: req.params.id } })
+
+      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+
+      if (title) project.title = title
+      if (description) project.description = description
+
+      await project.save()
+
+      return res.status(200).end()
+    } catch (err) {
+      next(err)
+    }
   }
 
   async remove (req, res, next) {
