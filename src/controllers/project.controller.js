@@ -13,7 +13,14 @@ class ProjectController {
   }
 
   async findOne (req, res, next) {
+    try {
+      const project = await Project.findOne({ where: { id: req.params.id } })
+      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
 
+      return res.status(200).json(project)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async insert (req, res, next) {
