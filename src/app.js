@@ -1,5 +1,6 @@
 const express = require('express')
 
+require('./database')
 const productRouter = require('./routes/product.routes')
 
 class App {
