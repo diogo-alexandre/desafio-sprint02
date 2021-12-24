@@ -1,7 +1,8 @@
 const express = require('express')
+const bodyParser = require('body-parser')
 
 require('./database')
-const productRouter = require('./routes/product.routes')
+const projectRouter = require('./routes/project.routes')
 
 class App {
   constructor () {
@@ -12,11 +13,12 @@ class App {
   }
 
   middlewares () {
-
+    this.express.use(bodyParser.urlencoded({ extended: true }))
+    this.express.use(bodyParser.json())
   }
 
   routes () {
-    this.express.use('/api/', productRouter)
+    this.express.use('/api/', projectRouter)
   }
 }
 
