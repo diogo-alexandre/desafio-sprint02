@@ -1,11 +1,20 @@
 const BadRequest = require('../errors/BadRequest')
 const NotFound = require('../errors/NotFound')
 const Project = require('../models/Project')
+const Task = require('../models/Task')
 
 class ProjectController {
   async findAll (req, res, next) {
     try {
-      const projects = await Project.findAll()
+      const projects = await Project.findAll({
+        include: [{
+          model: Task,
+          as: 'tasks',
+          attributes: {
+            exclude: ['projectId']
+          }
+        }]
+      })
       return res.json(projects)
     } catch (err) {
       next(err)
