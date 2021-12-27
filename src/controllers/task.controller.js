@@ -66,7 +66,38 @@ class TaskController {
   }
 
   async update (req, res, next) {
+    try {
+      const { title, taskRelevance, completed } = req.body
 
+      const project = await Project.findOne({
+        where: {
+          id: req.params.projectId
+        },
+        include: [{
+          model: Task,
+          as: 'tasks'
+        }]
+      })
+
+      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+
+      const task = project.tasks.find(taskModel => {
+        const task = taskModel.dataValues
+        return task.id === parseInt(req.params.id)
+      })
+
+      if (title) task.title = title
+      if (taskRelevance) task.taskRelevance = taskRelevance
+      if (typeof completed === 'boolean') task.completed = completed
+
+      await task.save()
+
+      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
+
+      return res.status(200).json(task)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async remove (req, res, next) {
