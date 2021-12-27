@@ -15,6 +15,7 @@ class ProjectController {
           }
         }]
       })
+
       return res.json(projects)
     } catch (err) {
       next(err)
@@ -35,6 +36,8 @@ class ProjectController {
       })
 
       if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+
+      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
 
       return res.status(200).json(project)
     } catch (err) {
@@ -67,6 +70,9 @@ class ProjectController {
         tasks[i] = task
       }
 
+      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
+      res.set('Location', `/api/project/${project.id}`)
+
       return res.status(201).json({
         ...project.dataValues,
         tasks
@@ -90,6 +96,8 @@ class ProjectController {
 
       await project.save()
 
+      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
+
       return res.status(200).json(project)
     } catch (err) {
       next(err)
@@ -102,6 +110,18 @@ class ProjectController {
       if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
 
       return res.status(204).end()
+    } catch (err) {
+      next(err)
+    }
+  }
+
+  async head (req, res, next) {
+    try {
+      const project = await Project.findOne({ where: { id: req.params.id } })
+
+      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
+
+      res.status(200).end()
     } catch (err) {
       next(err)
     }
