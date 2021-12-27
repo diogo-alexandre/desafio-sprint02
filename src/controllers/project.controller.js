@@ -90,7 +90,7 @@ class ProjectController {
 
       await project.save()
 
-      return res.status(200).end()
+      return res.status(200).json(project)
     } catch (err) {
       next(err)
     }
