@@ -43,16 +43,36 @@ class ProjectController {
   }
 
   async insert (req, res, next) {
+    let project = null
+
     try {
-      const { title, description } = req.body
+      const { title, description, tasks = [] } = req.body
 
       if (!title) throw new BadRequest('"title" is required')
       if (!description) throw new BadRequest('"description" is required')
 
-      await Project.create({ title, description })
+      project = await Project.create({ title, description }, { raw: true })
 
-      return res.status(201).end()
+      for (let i = 0; i < tasks.length; i++) {
+        if (!tasks[i].title) throw new BadRequest(`"task[${i}].title" is required`)
+        if (!tasks[i].taskRelevance) throw new BadRequest(`"task[${i}].taskRelevance" is required`)
+        if (typeof tasks[i].completed === 'undefined') throw new BadRequest(`"task[${i}].completed" is required`)
+
+        tasks[i] = await Task.create({
+          ...tasks[i],
+          projectId: project.id
+        })
+
+        const { projectId, ...task } = tasks[i].dataValues
+        tasks[i] = task
+      }
+
+      return res.status(201).json({
+        ...project.dataValues,
+        tasks
+      })
     } catch (err) {
+      if (project !== null) project.destroy()
       next(err)
     }
   }
