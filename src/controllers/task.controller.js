@@ -1,7 +1,18 @@
+const Task = require('../models/Task')
 
 class TaskController {
   async findAll (req, res, next) {
+    try {
+      const tasks = await Task.findAll({
+        where: {
+          projectId: req.params.projectId
+        }
+      })
 
+      return res.json(tasks)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async findOne (req, res, next) {
