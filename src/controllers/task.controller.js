@@ -103,7 +103,32 @@ class TaskController {
   }
 
   async remove (req, res, next) {
+    try {
+      const project = await Project.findOne({
+        where: {
+          id: req.params.projectId
+        },
+        include: [{
+          model: Task,
+          as: 'tasks'
+        }]
+      })
 
+      if (!project) throw new NotFound(`Cannot be found project with "id" = ${req.params.projectId}`)
+
+      const task = project.tasks.find(taskModel => {
+        const task = taskModel.dataValues
+        return task.id === parseInt(req.params.id)
+      })
+
+      if (task === undefined) throw new NotFound(`Cannot be found task with "id" = ${req.params.id}`)
+
+      await task.destroy()
+
+      return res.status(204).end()
+    } catch (err) {
+      next(err)
+    }
   }
 
   async head (req, res, next) {
