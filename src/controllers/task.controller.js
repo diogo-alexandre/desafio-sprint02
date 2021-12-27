@@ -94,7 +94,7 @@ class TaskController {
 
       await task.save()
 
-      res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
+      res.set('Last-Modified', (new Date(task.updatedAt)).getTime())
 
       return res.status(200).json(task)
     } catch (err) {
@@ -132,7 +132,15 @@ class TaskController {
   }
 
   async head (req, res, next) {
+    try {
+      const task = await Task.findOne({ where: { id: req.params.id } })
 
+      res.set('Last-Modified', (new Date(task.updatedAt)).getTime())
+
+      res.status(200).end()
+    } catch (err) {
+      next(err)
+    }
   }
 }
 
