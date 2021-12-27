@@ -3,6 +3,7 @@ const bodyParser = require('body-parser')
 
 require('./database')
 const projectRouter = require('./routes/project.routes')
+const taskRouter = require('./routes/task.routes')
 
 class App {
   constructor () {
@@ -23,6 +24,7 @@ class App {
   }
 
   routes () {
+    this.express.use('/asa/', taskRouter)
     this.express.use('/api/', projectRouter)
   }
 }
