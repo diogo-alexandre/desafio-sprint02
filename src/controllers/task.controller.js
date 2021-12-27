@@ -1,3 +1,4 @@
+const NotFound = require('../errors/NotFound')
 const Task = require('../models/Task')
 
 class TaskController {
@@ -16,10 +17,29 @@ class TaskController {
   }
 
   async findOne (req, res, next) {
+    try {
+      const task = await Task.findOne({
+        where: {
+          projectId: req.params.projectId,
+          id: req.params.id
+        }
+      })
 
+      if (!task) throw new NotFound(`Task cannot be found project with "id" = ${req.params.id}`)
+
+      res.set('Last-Modified', (new Date(task.updatedAt)).getTime())
+
+      return res.status(200).json(task)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async insert (req, res, next) {
+
+  }
+
+  async update (req, res, next) {
 
   }
 
