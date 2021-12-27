@@ -27,7 +27,7 @@ class TaskController {
         }
       })
 
-      if (!task) throw new NotFound(`Task cannot be found project with "id" = ${req.params.id}`)
+      if (!task) throw new NotFound(`Cannot be found task with "id" = ${req.params.id}`)
 
       res.set('Last-Modified', (new Date(task.updatedAt)).getTime())
 

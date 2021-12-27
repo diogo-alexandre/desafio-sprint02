@@ -35,7 +35,7 @@ class ProjectController {
         }]
       })
 
-      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+      if (!project) throw new NotFound(`Cannot be found project with "id" = ${req.params.id}`)
 
       res.set('Last-Modified', (new Date(project.updatedAt)).getTime())
 
@@ -89,7 +89,7 @@ class ProjectController {
 
       const project = await Project.findOne({ where: { id: req.params.id } })
 
-      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+      if (!project) throw new NotFound(`Cannot be found project with "id" = ${req.params.id}`)
 
       if (title) project.title = title
       if (description) project.description = description
@@ -107,7 +107,7 @@ class ProjectController {
   async remove (req, res, next) {
     try {
       const project = await Project.destroy({ where: { id: req.params.id } })
-      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+      if (!project) throw new NotFound(`Cannot be found project with "id" = ${req.params.id}`)
 
       return res.status(204).end()
     } catch (err) {
