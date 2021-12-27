@@ -79,12 +79,14 @@ class TaskController {
         }]
       })
 
-      if (!project) throw new NotFound(`Project cannot be found project with "id" = ${req.params.id}`)
+      if (!project) throw new NotFound(`Cannot be found project with "id" = ${req.params.projectId}`)
 
       const task = project.tasks.find(taskModel => {
         const task = taskModel.dataValues
         return task.id === parseInt(req.params.id)
       })
+
+      if (task === undefined) throw new NotFound(`Cannot be found task with "id" = ${req.params.id}`)
 
       if (title) task.title = title
       if (taskRelevance) task.taskRelevance = taskRelevance
