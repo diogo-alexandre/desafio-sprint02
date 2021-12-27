@@ -1,4 +1,6 @@
+const BadRequest = require('../errors/BadRequest')
 const NotFound = require('../errors/NotFound')
+const Project = require('../models/Project')
 const Task = require('../models/Task')
 
 class TaskController {
@@ -36,7 +38,31 @@ class TaskController {
   }
 
   async insert (req, res, next) {
+    try {
+      const { title, taskRelevance, completed } = req.body
 
+      if (!title) throw new BadRequest('"title" is required')
+      if (!taskRelevance) throw new BadRequest('"taskRelevance" is required')
+      if (typeof completed === 'undefined') throw new BadRequest('"completed" is required')
+
+      const project = await Project.findOne({ where: { id: req.params.projectId } })
+
+      if (!project) throw new NotFound(`"Project" with id = ${req.params.projectId} was not found`)
+
+      const task = await Task.create({
+        title,
+        taskRelevance,
+        completed,
+        projectId: project.id
+      })
+
+      res.set('Last-Modified', (new Date(task.updatedAt)).getTime())
+      res.set('Location', `/api/project/${task.projectId}/task/${task.id}`)
+
+      return res.status(201).json(task)
+    } catch (err) {
+      next(err)
+    }
   }
 
   async update (req, res, next) {
