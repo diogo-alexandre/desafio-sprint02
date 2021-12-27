@@ -15,6 +15,11 @@ class App {
   middlewares () {
     this.express.use(bodyParser.urlencoded({ extended: true }))
     this.express.use(bodyParser.json())
+
+    this.express.use((req, res, next) => {
+      res.set('Acess-Control-Allow-Origin', '*')
+      next()
+    })
   }
 
   routes () {
